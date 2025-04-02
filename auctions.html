@@ -1,11 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Auctions</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Auction</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>All Auctions</h2>
-    <p>Browse ongoing auctions and place your bids.</p>
+    <header>
+        <div class="logo">AuctionHub</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="auctions.html">Auctions</a></li>
+                <li><a href="create_auction.html">Create Auction</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="login.html">Login/Register</a></li>
+                <li><a href="admin.html">Admin Panel</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="auction-form">
+        <h2>Create a New Auction</h2>
+        <form id="auctionForm">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" required>
+            
+            <label for="startingBid">Starting Bid ($):</label>
+            <input type="number" id="startingBid" required>
+            
+            <label for="itemImage">Item Image URL:</label>
+            <input type="text" id="itemImage" required>
+            
+            <button type="submit">Add Auction</button>
+        </form>
+    </section>
+    
+    <section class="active-auctions">
+        <h2>Active Auctions</h2>
+        <div id="auctionList" class="auction-grid"></div>
+    </section>
+    
+    <script>
+        document.getElementById("auctionForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let itemName = document.getElementById("itemName").value;
+            let startingBid = document.getElementById("startingBid").value;
+            let itemImage = document.getElementById("itemImage").value;
+            
+            let auctionList = document.getElementById("auctionList");
+            
+            let auctionItem = document.createElement("div");
+            auctionItem.classList.add("auction-item");
+            auctionItem.innerHTML = `
+                <img src="${itemImage}" alt="${itemName}">
+                <h3>${itemName}</h3>
+                <p>Starting Bid: $${startingBid}</p>
+                <button class="btn">Bid Now</button>
+            `;
+            
+            auctionList.appendChild(auctionItem);
+            
+            document.getElementById("auctionForm").reset();
+        });
+    </script>
 </body>
 </html>
