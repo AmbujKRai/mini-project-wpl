@@ -7,6 +7,59 @@ require 'db.php';
 <head>
     <title>Auctions</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .modal-content input {
+            margin-top: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        .modal-content button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .auction-item {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -38,12 +91,26 @@ while ($row = $result->fetch_assoc()) {
     $end_time = $row['end_time'];
     $image_path = htmlspecialchars($row['image_path']);
 
+    // Get highest bid
+    $bid_result = $conn->query("SELECT MAX(bid_amount) AS highest_bid FROM bids WHERE auction_id = $id");
+    $highest_bid = $bid_result && $bid_result->num_rows > 0 ? $bid_result->fetch_assoc()['highest_bid'] : null;
+    $highest_bid = $highest_bid ? $highest_bid : $start_price;
+
     echo "
-    <div class='auction-item'>
+    <div class='auction-item' 
+         data-id='$id'
+         data-title=\"$title\"
+         data-description=\"$description\"
+         data-start_price=\"$start_price\"
+         data-highest_bid=\"$highest_bid\"
+         data-end_time=\"$end_time\"
+         data-image=\"$image_path\"
+         onclick='openModal(this)'>
         <img src='$image_path' alt='Auction Image'>
         <h3>$title</h3>
         <p>$description</p>
         <p><strong>Starting Price:</strong> ₹$start_price</p>
+        <p><strong>Current Bid:</strong> ₹$highest_bid</p>
         <p><strong>Time Left:</strong> <span class='timer' data-end_time='$end_time' id='timer-$id'>Loading...</span></p>
         <a href='#' class='btn'>Bid Now</a>
     </div>
@@ -51,6 +118,23 @@ while ($row = $result->fetch_assoc()) {
 }
 ?>
 
+</div>
+
+<!-- Modal Popup -->
+<div id="auctionModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImage" src="" alt="Auction Image" />
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+        <p><strong>Starting Price:</strong> ₹<span id="modalPrice"></span></p>
+        <p><strong>Current Highest Bid:</strong> ₹<span id="modalHighestBid"></span></p>
+        <p><strong>Ends on:</strong> <span id="modalDeadline"></span></p>
+        
+        <input type="number" id="bidAmount" placeholder="Enter your bid" />
+        <button onclick="placeBid()">Place Bid</button>
+        <p id="bidMessage"></p>
+    </div>
 </div>
 
 <script>
@@ -72,7 +156,7 @@ while ($row = $result->fetch_assoc()) {
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            timerElement.innerText = 
+            timerElement.innerText =
                 `${days}d ${hours}h ${minutes}m ${seconds}s`;
         }
 
@@ -89,6 +173,45 @@ while ($row = $result->fetch_assoc()) {
             }
         });
     });
+
+    function openModal(element) {
+        document.getElementById('modalTitle').innerText = element.dataset.title;
+        document.getElementById('modalDescription').innerText = element.dataset.description;
+        document.getElementById('modalPrice').innerText = element.dataset.start_price;
+        document.getElementById('modalHighestBid').innerText = element.dataset.highest_bid;
+        document.getElementById('modalDeadline').innerText = new Date(element.dataset.end_time).toLocaleString();
+        document.getElementById('modalImage').src = element.dataset.image;
+
+        document.getElementById('bidAmount').value = '';
+        document.getElementById('bidMessage').innerText = '';
+        document.getElementById('bidAmount').dataset.auction_id = element.dataset.id;
+
+        document.getElementById('auctionModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('auctionModal').style.display = 'none';
+    }
+
+    function placeBid() {
+        const bidInput = document.getElementById('bidAmount');
+        const bid = parseFloat(bidInput.value);
+        const auctionId = bidInput.dataset.auction_id;
+        const currentHighest = parseFloat(document.getElementById('modalHighestBid').innerText);
+
+        if (isNaN(bid) || bid <= currentHighest) {
+            document.getElementById('bidMessage').innerText = 'Bid must be higher than current bid!';
+            document.getElementById('bidMessage').style.color = 'red';
+            return;
+        }
+
+        // Demo only — no DB write yet
+        document.getElementById('bidMessage').innerText = 'Bid placed successfully (demo only)';
+        document.getElementById('bidMessage').style.color = 'green';
+
+        // Update highest bid
+        document.getElementById('modalHighestBid').innerText = bid.toFixed(2);
+    }
 </script>
 
 </body>
