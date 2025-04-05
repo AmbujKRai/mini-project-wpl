@@ -110,7 +110,7 @@ while ($row = $result->fetch_assoc()) {
         <h3>$title</h3>
         <p>$description</p>
         <p><strong>Starting Price:</strong> ₹$start_price</p>
-        <p><strong>Current Bid:</strong> ₹$highest_bid</p>
+        <p><strong>Current Bid:</strong> ₹<span id='card-bid-$id'>$highest_bid</span></p>
         <p><strong>Time Left:</strong> <span class='timer' data-end_time='$end_time' id='timer-$id'>Loading...</span></p>
         <a href='#' class='btn'>Bid Now</a>
     </div>
@@ -216,6 +216,11 @@ while ($row = $result->fetch_assoc()) {
                 message.innerText = 'Bid placed successfully!';
                 message.style.color = 'green';
                 document.getElementById('modalHighestBid').innerText = bid.toFixed(2);
+                const cardBidSpan = document.getElementById('card-bid-' + auctionId);
+                if (cardBidSpan) {
+                    cardBidSpan.innerText = bid.toFixed(2);
+                }
+
             } else if (xhr.responseText === "lowbid") {
                 message.innerText = 'Your bid must be higher than the current bid!';
                 message.style.color = 'red';
