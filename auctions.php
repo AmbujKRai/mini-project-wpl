@@ -194,24 +194,41 @@ while ($row = $result->fetch_assoc()) {
     }
 
     function placeBid() {
-        const bidInput = document.getElementById('bidAmount');
-        const bid = parseFloat(bidInput.value);
-        const auctionId = bidInput.dataset.auction_id;
-        const currentHighest = parseFloat(document.getElementById('modalHighestBid').innerText);
+    const bidInput = document.getElementById('bidAmount');
+    const bid = parseFloat(bidInput.value);
+    const auctionId = bidInput.dataset.auction_id;
+    const currentHighest = parseFloat(document.getElementById('modalHighestBid').innerText);
+    const message = document.getElementById('bidMessage');
 
-        if (isNaN(bid) || bid <= currentHighest) {
-            document.getElementById('bidMessage').innerText = 'Bid must be higher than current bid!';
-            document.getElementById('bidMessage').style.color = 'red';
-            return;
-        }
-
-        // Demo only — no DB write yet
-        document.getElementById('bidMessage').innerText = 'Bid placed successfully (demo only)';
-        document.getElementById('bidMessage').style.color = 'green';
-
-        // Update highest bid
-        document.getElementById('modalHighestBid').innerText = bid.toFixed(2);
+    if (isNaN(bid) || bid <= currentHighest) {
+        message.innerText = 'Bid must be higher than current bid!';
+        message.style.color = 'red';
+        return;
     }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'place_bid.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            if (xhr.responseText === "success") {
+                message.innerText = 'Bid placed successfully!';
+                message.style.color = 'green';
+                document.getElementById('modalHighestBid').innerText = bid.toFixed(2);
+            } else if (xhr.responseText === "lowbid") {
+                message.innerText = 'Your bid must be higher than the current bid!';
+                message.style.color = 'red';
+            } else {
+                message.innerText = 'Something went wrong.';
+                message.style.color = 'red';
+            }
+        }
+    };
+
+    xhr.send(`auction_id=${auctionId}&bid_amount=${bid}`);
+    }
+
 </script>
 
 </body>
