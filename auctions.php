@@ -67,91 +67,142 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
     <link rel="stylesheet" href="styles.css">
     <style>
         .filter-section {
-            background: #f0f0f0;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
         .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .filter-form .filter-item {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
+            flex-direction: column;
+        }
+        
+        .filter-form label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #555;
         }
         
         .filter-form select, .filter-form input {
-            padding: 8px;
+            padding: 10px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 0.95rem;
+            width: 100%;
+            height: 42px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .filter-form select:focus, .filter-form input:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
         }
         
         .filter-form button {
-            padding: 8px 15px;
-            background: #007bff;
+            padding: 10px 20px;
+            background: #28a745;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 30px;
             cursor: pointer;
+            font-size: 0.95rem;
+            height: 42px;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        
+        .filter-form button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
         
         .auction-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
+            margin-top: 20px;
         }
         
         .auction-item {
             position: relative;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .auction-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .auction-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .auction-item-content {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .auction-item h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #28a745;
+        }
+        
+        .auction-item p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
         
         .auction-details {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
         }
         
         .auction-meta {
-            font-size: 0.9em;
-            color: #666;
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 3px;
         }
         
         .quantity-badge {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(40, 167, 69, 0.8);
             color: white;
             padding: 5px 10px;
             border-radius: 20px;
-            font-size: 0.8em;
-        }
-        
-        .modal-content {
-            max-width: 700px;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        
-        .modal-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2em;
-            color: #666;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
         .new-seller-badge {
@@ -215,6 +266,184 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
             font-size: 0.8em;
             color: #666;
         }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 0 auto;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            color: #28a745;
+        }
+
+        .modal-content h3 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .modal-content img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .bid-form {
+            margin-top: 15px;
+        }
+
+        .bid-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .bid-input-group input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .bid-input-group input:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+        }
+
+        .bid-input-group button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .bid-input-group button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        #bidMessage {
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-form button {
+                width: 100%;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+                margin: 0 auto;
+            }
+            
+            .modal-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .seller-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .bid-input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .bid-input-group button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -230,7 +459,7 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
             <?php if(isset($_SESSION['user_id'])): ?>
                 <li><a href="logout.php">Logout</a></li>
             <?php else: ?>
-                <li><a href="login.php">Login/Register</a></li>
+            <li><a href="login.php">Login/Register</a></li>
             <?php endif; ?>
             <?php if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'admin'): ?>
                 <li><a href="admin.php">Admin Panel</a></li>
@@ -244,12 +473,14 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
     
     <div class="filter-section">
         <form class="filter-form" method="GET">
-            <div>
-                <input type="text" name="search" placeholder="Search..." value="<?= htmlspecialchars($search) ?>">
+            <div class="filter-item">
+                <label for="search">Search</label>
+                <input type="text" id="search" name="search" placeholder="Search..." value="<?= htmlspecialchars($search) ?>">
             </div>
             
-            <div>
-                <select name="category">
+            <div class="filter-item">
+                <label for="category">Category</label>
+                <select id="category" name="category">
                     <option value="">All Categories</option>
                     <?php foreach($categories as $cat): ?>
                         <option value="<?= htmlspecialchars($cat) ?>" <?= $category == $cat ? 'selected' : '' ?>>
@@ -259,8 +490,9 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
                 </select>
             </div>
             
-            <div>
-                <select name="sort">
+            <div class="filter-item">
+                <label for="sort">Sort By</label>
+                <select id="sort" name="sort">
                     <option value="latest" <?= $sort == 'latest' ? 'selected' : '' ?>>Latest</option>
                     <option value="ending_soon" <?= $sort == 'ending_soon' ? 'selected' : '' ?>>Ending Soon</option>
                     <option value="price_low" <?= $sort == 'price_low' ? 'selected' : '' ?>>Price: Low to High</option>
@@ -271,8 +503,9 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
                 </select>
             </div>
             
-            <div>
-                <select name="filter_by">
+            <div class="filter-item">
+                <label for="filter_by">Show Only</label>
+                <select id="filter_by" name="filter_by">
                     <option value="" <?= $filter_by == '' ? 'selected' : '' ?>>All Sellers</option>
                     <option value="top_rated" <?= $filter_by == 'top_rated' ? 'selected' : '' ?>>Top Rated Sellers</option>
                     <option value="new_seller" <?= $filter_by == 'new_seller' ? 'selected' : '' ?>>New Sellers</option>
@@ -280,26 +513,28 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
                 </select>
             </div>
             
-            <button type="submit">Filter</button>
+            <div class="filter-item">
+                <button type="submit">Apply Filters</button>
+            </div>
         </form>
     </div>
 
     <?php if ($result->num_rows > 0): ?>
-        <div class="auction-grid">
+<div class="auction-grid">
             <?php while ($row = $result->fetch_assoc()): ?>
-                <?php
-                $id = $row['id'];
-                $title = htmlspecialchars($row['title']);
-                $description = htmlspecialchars($row['description']);
-                $start_price = $row['start_price'];
-                $end_time = $row['end_time'];
-                $image_path = htmlspecialchars($row['image_path']);
+<?php
+    $id = $row['id'];
+    $title = htmlspecialchars($row['title']);
+    $description = htmlspecialchars($row['description']);
+    $start_price = $row['start_price'];
+    $end_time = $row['end_time'];
+    $image_path = htmlspecialchars($row['image_path']);
                 $category = htmlspecialchars($row['category']);
                 $quantity = $row['quantity'];
                 $unit = htmlspecialchars($row['unit']);
                 $seller_name = htmlspecialchars($row['seller_name']);
 
-                // Get highest bid
+    // Get highest bid
                 $bid_result = $conn->query("SELECT MAX(bid_amount) AS highest_bid, COUNT(*) as bid_count FROM bids WHERE auction_id = $id");
                 $bid_data = $bid_result->fetch_assoc();
                 $highest_bid = $bid_data['highest_bid'] ? $bid_data['highest_bid'] : $start_price;
@@ -331,34 +566,36 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
                         <div class="new-seller-badge">New Seller</div>
                     <?php endif; ?>
                     
-                    <h3><?= $title ?></h3>
-                    <p><?= substr($description, 0, 100) ?>...</p>
-                    
-                    <div class="auction-details">
-                        <div>
-                            <p><strong>Current Bid:</strong> ₹<span id="card-bid-<?= $id ?>"><?= $highest_bid ?></span></p>
-                            <p class="auction-meta"><?= $bid_count ?> bids</p>
+                    <div class="auction-item-content">
+                        <h3><?= $title ?></h3>
+                        <p><?= substr($description, 0, 100) ?>...</p>
+                        
+                        <div class="auction-details">
+                            <div>
+                                <p><strong>Current Bid:</strong> ₹<span id="card-bid-<?= $id ?>"><?= $highest_bid ?></span></p>
+                                <p class="auction-meta"><?= $bid_count ?> bids</p>
+                            </div>
+                            <div>
+                                <p><span class="timer" data-end_time="<?= $end_time ?>" id="timer-<?= $id ?>">Loading...</span></p>
+                                <p class="auction-meta"><?= $category ?></p>
+                            </div>
                         </div>
-                        <div>
-                            <p><span class="timer" data-end_time="<?= $end_time ?>" id="timer-<?= $id ?>">Loading...</span></p>
-                            <p class="auction-meta"><?= $category ?></p>
-                        </div>
-                    </div>
-                    
-                    <div class="seller-info">
-                        <div class="credit-score">
-                            <span class="credit-label">Seller Rating:</span>
-                            <div class="credit-stars">
-                                <?php 
-                                $stars = min(5, floor($row['credit_score'] / 20)); // Convert credit score to stars (0-5)
-                                for ($i = 0; $i < 5; $i++) {
-                                    if ($i < $stars) {
-                                        echo '<span class="star filled">★</span>';
-                                    } else {
-                                        echo '<span class="star">☆</span>';
+                        
+                        <div class="seller-info">
+                            <div class="credit-score">
+                                <span class="credit-label">Seller Rating:</span>
+                                <div class="credit-stars">
+                                    <?php 
+                                    $stars = min(5, floor($row['credit_score'] / 20)); // Convert credit score to stars (0-5)
+                                    for ($i = 0; $i < 5; $i++) {
+                                        if ($i < $stars) {
+                                            echo '<span class="star filled">★</span>';
+                                        } else {
+                                            echo '<span class="star">☆</span>';
+                                        }
                                     }
-                                }
-                                ?>
+                                    ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -378,7 +615,7 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="modalTitle"></h2>
-            <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeModal()">&times;</span>
         </div>
         
         <img id="modalImage" src="" alt="Auction Image" />
@@ -390,8 +627,8 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
                 <p><strong>Seller:</strong> <span id="modalSeller"></span></p>
             </div>
             <div>
-                <p><strong>Starting Price:</strong> ₹<span id="modalPrice"></span></p>
-                <p><strong>Current Highest Bid:</strong> ₹<span id="modalHighestBid"></span></p>
+        <p><strong>Starting Price:</strong> ₹<span id="modalPrice"></span></p>
+        <p><strong>Current Highest Bid:</strong> ₹<span id="modalHighestBid"></span></p>
                 <p><strong>Total Bids:</strong> <span id="modalBidCount"></span></p>
                 <p><strong>Ends:</strong> <span id="modalDeadline"></span></p>
             </div>
@@ -418,18 +655,19 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
         </div>
         
         <?php if(isset($_SESSION['user_id'])): ?>
-            <div>
+            <div class="bid-form">
                 <h3>Place Your Bid</h3>
                 <p>Enter an amount higher than the current bid</p>
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="bidAmount" placeholder="Enter your bid" style="flex: 1;">
+                <div class="bid-input-group">
+                    <input type="number" id="bidAmount" placeholder="Enter your bid" step="0.01">
                     <button onclick="placeBid()">Place Bid</button>
                 </div>
                 <p id="bidMessage"></p>
             </div>
         <?php else: ?>
-            <div>
-                <p>Please <a href="login.php">login</a> to place a bid</p>
+            <div class="bid-form">
+                <h3>Want to place a bid?</h3>
+                <p>Please <a href="login.php">login</a> to place a bid on this auction</p>
             </div>
         <?php endif; ?>
     </div>
@@ -521,22 +759,22 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
 
         const bidInput = document.getElementById('bidAmount');
         if (bidInput) {
-            const bidButton = document.querySelector('.modal-content button');
-            const bidMessage = document.getElementById('bidMessage');
+        const bidButton = document.querySelector('.modal-content button');
+        const bidMessage = document.getElementById('bidMessage');
 
-            bidInput.value = '';
-            bidInput.dataset.auction_id = element.dataset.id;
+        bidInput.value = '';
+        bidInput.dataset.auction_id = element.dataset.id;
             bidInput.min = parseFloat(element.dataset.highest_bid) + 0.01;
 
-            if (now > endTime) {
-                bidInput.disabled = true;
-                bidButton.disabled = true;
+        if (now > endTime) {
+            bidInput.disabled = true;
+            bidButton.disabled = true;
                 bidMessage.innerText = 'This auction has ended';
-                bidMessage.style.color = 'red';
-            } else {
-                bidInput.disabled = false;
-                bidButton.disabled = false;
-                bidMessage.innerText = '';
+            bidMessage.style.color = 'red';
+        } else {
+            bidInput.disabled = false;
+            bidButton.disabled = false;
+            bidMessage.innerText = '';
             }
         }
 

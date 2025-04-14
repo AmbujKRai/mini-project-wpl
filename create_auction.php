@@ -110,20 +110,126 @@ $categories = ['Industrial Scrap', 'Chemical Waste', 'Textile Waste', 'Plastic W
     <title>Create Auction - Industrial Waste</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .auction-form {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
         .form-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
         
         .form-group {
             flex: 1;
+            margin-bottom: 20px;
         }
         
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #455a64;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="datetime-local"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: #f8f9fa;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="datetime-local"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+            background-color: #fff;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        input[type="file"] {
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px dashed #ccc;
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        button[type="submit"] {
+            background: #28a745;
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        button[type="submit"]:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        small {
+            display: block;
+            color: #78909c;
+            margin-top: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .success-message {
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-left: 4px solid #28a745;
+            color: #218838;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .error-message {
+            padding: 15px;
+            background-color: #ffebee;
+            border-left: 4px solid #dc3545;
+            color: #c62828;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .auction-form {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -150,71 +256,88 @@ $categories = ['Industrial Scrap', 'Chemical Waste', 'Textile Waste', 'Plastic W
 </header>
 
 <div class="container">
-    <h2>Create a New Waste Auction</h2>
-    <form action="create_auction.php" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" placeholder="Auction Title" required>
-        </div>
-        
-        <div class="form-row">
+    <h1>Create a New Waste Auction</h1>
+    
+    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+        <?php if (isset($stmt) && isset($stmt->affected_rows) && $stmt->affected_rows > 0): ?>
+            <div class="success-message">
+                <p>Auction created successfully! Your waste material is now listed for bidding.</p>
+                <p><a href="auctions.php">View all auctions</a> or <a href="profile.php">go to your profile</a> to manage your listings.</p>
+            </div>
+        <?php elseif (isset($uploadOk) && $uploadOk == 0): ?>
+            <div class="error-message">
+                <p>Error creating auction. Please check the form and try again.</p>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <div class="auction-form">
+        <form action="create_auction.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="category">Waste Category</label>
-                <select id="category" name="category" required>
-                    <?php foreach($categories as $category): ?>
-                        <option value="<?= $category ?>"><?= $category ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <label for="title">Auction Title</label>
+                <input type="text" id="title" name="title" placeholder="E.g., 500kg Metal Scrap from Manufacturing Process" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category">Waste Category</label>
+                    <select id="category" name="category" required>
+                        <?php foreach($categories as $category): ?>
+                            <option value="<?= $category ?>"><?= $category ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" step="0.01" min="0.01" placeholder="Amount" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="unit">Unit</label>
+                    <select id="unit" name="unit" required>
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="ton">Tons</option>
+                        <option value="liter">Liters</option>
+                        <option value="cubic_meter">Cubic Meters</option>
+                        <option value="piece">Pieces</option>
+                    </select>
+                </div>
             </div>
             
             <div class="form-group">
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" name="quantity" step="0.01" min="0.01" required>
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Detailed description of the waste material including composition, origin, condition, and any other relevant information that might be useful for potential buyers." rows="5" required></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="start_price">Starting Price (₹)</label>
+                    <input type="number" id="start_price" name="start_price" placeholder="Minimum bid amount" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end_time">Auction End Time</label>
+                    <input type="datetime-local" id="end_time" name="end_time" required>
+                    <small>Set when the auction will close. Must be at least 1 hour from now.</small>
+                    <script>
+                        // Set minimum end time to 1 hour from now
+                        const now = new Date();
+                        now.setHours(now.getHours() + 1);
+                        document.getElementById('end_time').min = now.toISOString().slice(0, 16);
+                    </script>
+                </div>
             </div>
             
             <div class="form-group">
-                <label for="unit">Unit</label>
-                <select id="unit" name="unit" required>
-                    <option value="kg">Kilograms (kg)</option>
-                    <option value="ton">Tons</option>
-                    <option value="liter">Liters</option>
-                    <option value="cubic_meter">Cubic Meters</option>
-                    <option value="piece">Pieces</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" placeholder="Detailed description of the waste material, composition, origin, etc." rows="5" required></textarea>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="start_price">Starting Price (₹)</label>
-                <input type="number" id="start_price" name="start_price" placeholder="Starting Price" step="0.01" min="0" required>
+                <label for="image">Upload Image</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+                <small>Upload a clear image of the waste material. Maximum file size: 5MB. Supported formats: JPG, JPEG, PNG, GIF.</small>
             </div>
             
-            <div class="form-group">
-                <label for="end_time">Auction End Time</label>
-                <input type="datetime-local" id="end_time" name="end_time" required>
-                <script>
-                    // Set minimum end time to 1 hour from now
-                    const now = new Date();
-                    now.setHours(now.getHours() + 1);
-                    document.getElementById('end_time').min = now.toISOString().slice(0, 16);
-                </script>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="image">Upload Image</label>
-            <input type="file" id="image" name="image" accept="image/*" required>
-            <small>Upload an image of the waste material (max 5MB)</small>
-        </div>
-        
-        <button type="submit">Create Auction</button>
-    </form>
+            <button type="submit">Create Auction</button>
+        </form>
+    </div>
 </div>
 
 </body>
