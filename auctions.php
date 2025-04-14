@@ -127,10 +127,58 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
             font-size: 0.8em;
         }
         
-        .modal-content {
-            max-width: 700px;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            padding: 20px;
+            box-sizing: border-box;
         }
         
+        .modal-content {
+            background-color: #fff;
+            margin: 0 auto;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -214,6 +262,24 @@ while ($cat = $categoriesQuery->fetch_assoc()) {
         .metric-label {
             font-size: 0.8em;
             color: #666;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+                margin: 0 auto;
+            }
+            
+            .modal-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .seller-details {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
