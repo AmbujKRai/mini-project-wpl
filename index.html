@@ -3,56 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auction Website</title>
+    <title>WasteBidder - Industrial Waste & Byproduct Auction Platform</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2em;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .cta-btn {
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: transform 0.3s;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .primary-btn {
+            background: #28a745;
+            color: white;
+        }
+        
+        .secondary-btn {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .features {
+            padding: 80px 0;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        
+        .features h2 {
+            margin-bottom: 50px;
+            color: #333;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #28a745;
+        }
+        
+        .how-it-works {
+            background: white;
+            padding: 80px 0;
+        }
+        
+        .how-it-works h2 {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #333;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .step-number {
+            background: #28a745;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .categories {
+            padding: 80px 0;
+            text-align: center;
+            background: #f1f8f3;
+        }
+        
+        .categories h2 {
+            margin-bottom: 50px;
+            color: #333;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .category-item {
+            position: relative;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .category-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .category-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .category-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .stats {
+            background: #28a745;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .stats h2 {
+            margin-bottom: 40px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .stat-item h3 {
+            font-size: 2.5em;
+            margin: 0 0 10px;
+        }
+        
+        .testimonials {
+            background: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .testimonials h2 {
+            margin-bottom: 50px;
+            color: #333;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .testimonial-item {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .author-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .author-company {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        footer {
+            background: #333;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <div class="logo">AuctionHub</div>
+        <div class="logo">WasteBidder</div>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="auctions.php">Auctions</a></li>
                 <li><a href="create_auction.php">Create Auction</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="login.html">Login/Register</a></li>
-                <li><a href="admin.html">Admin Panel</a></li>
+                <li><a href="profile.php">Profile</a></li>
+                <li><a href="login.php">Login/Register</a></li>
             </ul>
         </nav>
     </header>
     
     <section class="hero">
-        <h1>Find Unique Items & Bid to Win!</h1>
-        <p>Join our auction community and discover great deals.</p>
-        <a href="auctions.html" class="btn">Start Bidding</a>
+        <h1>Transform Industrial Waste into Valuable Resources</h1>
+        <p>WasteBidder connects industries with excess byproducts to businesses that can repurpose them, creating a circular economy and reducing environmental impact.</p>
+        <div class="cta-buttons">
+            <a href="auctions.php" class="cta-btn primary-btn">Browse Waste Materials</a>
+            <a href="login.php" class="cta-btn secondary-btn">Join Our Ecosystem</a>
+        </div>
     </section>
     
-    <section class="featured-auctions">
-        <h2>Featured Auctions</h2>
-        <div class="auction-grid">
-            <div class="auction-item">
-                <img src="vintage_watch.jpeg" alt="Auction Item">
-                <h3>Vintage Watch</h3>
-                <p>Current Bid: $150</p>
-                <a href="auction-details.html" class="btn">Bid Now</a>
+    <section class="features">
+        <h2>Benefits for Your Business</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">💰</div>
+                <h3>Reduce Disposal Costs</h3>
+                <p>Turn waste disposal expenses into potential revenue streams by selling your industrial byproducts.</p>
             </div>
-            <div class="auction-item">
-                <img src="antique_painting.jpeg" alt="Auction Item">
-                <h3>Antique Painting</h3>
-                <p>Current Bid: $250</p>
-                <a href="auction-details.html" class="btn">Bid Now</a>
+            <div class="feature-item">
+                <div class="feature-icon">♻️</div>
+                <h3>Environmental Compliance</h3>
+                <p>Meet regulatory requirements and improve your company's sustainability metrics.</p>
             </div>
-            <div class="auction-item">
-                <img src="rare_coin.jpeg" alt="Auction Item">
-                <h3>Rare Coin</h3>
-                <p>Current Bid: $500</p>
-                <a href="auction-details.html" class="btn">Bid Now</a>
+            <div class="feature-item">
+                <div class="feature-icon">🏭</div>
+                <h3>Resource Efficiency</h3>
+                <p>Find affordable raw materials for your manufacturing processes from other industries' waste.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🌿</div>
+                <h3>Reduce Carbon Footprint</h3>
+                <p>Minimize landfill waste and contribute to a more sustainable, circular economy.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔄</div>
+                <h3>Circular Economy</h3>
+                <p>Participate in the growing circular economy movement and discover new value in waste materials.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🤝</div>
+                <h3>Industry Partnerships</h3>
+                <p>Connect with businesses across different sectors to create sustainable supply chains.</p>
             </div>
         </div>
     </section>
     
-    <!-- <footer>
-        <p>&copy; 2025 AuctionHub. All Rights Reserved.</p>
-    </footer> -->
+    <section class="how-it-works">
+        <h2>How WasteBidder Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Register Your Business</h3>
+                    <p>Create a company profile and specify your industry, location, and material interests (either what you produce or what you're looking to source).</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>List Your Waste Materials</h3>
+                    <p>If you're a waste producer, create detailed listings with material specifications, quantity, location, and your asking price.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Participate in Auctions</h3>
+                    <p>If you're seeking materials, browse available listings and place competitive bids on waste streams that match your needs.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Complete Transactions</h3>
+                    <p>When an auction ends, our platform connects buyers and sellers to arrange material transfer, transportation, and payment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="categories">
+        <h2>Industrial Waste Categories</h2>
+        <div class="category-grid">
+            <a href="auctions.php?category=Metal+Scrap" class="category-item">
+                <img src="https://images.unsplash.com/photo-1605600659873-d808a13e4d2a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Metal Scrap">
+                <div class="category-overlay">Metal Scrap</div>
+            </a>
+            <a href="auctions.php?category=Chemical+Waste" class="category-item">
+                <img src="https://images.unsplash.com/photo-1563207153-f403bf289096?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Chemical Waste">
+                <div class="category-overlay">Chemical Waste</div>
+            </a>
+            <a href="auctions.php?category=Plastic+Waste" class="category-item">
+                <img src="https://images.unsplash.com/photo-1591193686104-fddba4cb3b08?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Plastic Waste">
+                <div class="category-overlay">Plastic Waste</div>
+            </a>
+            <a href="auctions.php?category=Textile+Waste" class="category-item">
+                <img src="https://images.unsplash.com/photo-1567374783277-ac2596eecb1e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Textile Waste">
+                <div class="category-overlay">Textile Waste</div>
+            </a>
+            <a href="auctions.php?category=Electronic+Waste" class="category-item">
+                <img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Electronic Waste">
+                <div class="category-overlay">E-Waste</div>
+            </a>
+            <a href="auctions.php?category=Paper+Waste" class="category-item">
+                <img src="https://images.unsplash.com/photo-1530319067432-f2a729c03db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Paper Waste">
+                <div class="category-overlay">Paper Waste</div>
+            </a>
+        </div>
+    </section>
+    
+    <section class="stats">
+        <h2>Our Impact</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>2,500+</h3>
+                <p>Tons of waste diverted from landfills</p>
+            </div>
+            <div class="stat-item">
+                <h3>450+</h3>
+                <p>Businesses in our network</p>
+            </div>
+            <div class="stat-item">
+                <h3>15+</h3>
+                <p>Industry sectors</p>
+            </div>
+            <div class="stat-item">
+                <h3>30%</h3>
+                <p>Average cost savings</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="testimonials">
+        <h2>What Our Users Say</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-item">
+                <p class="testimonial-text">"WasteBidder helped us reduce our waste disposal costs by 40% while connecting us with companies that can actually use our metal scrap. It's a win-win solution."</p>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Testimonial Author" class="author-image">
+                    <div>
+                        <div class="author-name">Rajesh Sharma</div>
+                        <div class="author-company">Manufacturing Manager, Steel Industries Ltd.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-item">
+                <p class="testimonial-text">"As a small recycling facility, we've found an incredible supply of consistent materials through this platform. Our processing capacity has increased by 25% thanks to WasteBidder."</p>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Testimonial Author" class="author-image">
+                    <div>
+                        <div class="author-name">Priya Patel</div>
+                        <div class="author-company">Owner, EcoRecycle Solutions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-item">
+                <p class="testimonial-text">"The chemical byproducts from our manufacturing process used to be a liability. Now they're a revenue stream. This platform has transformed our waste management approach."</p>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Testimonial Author" class="author-image">
+                    <div>
+                        <div class="author-name">Vikram Singh</div>
+                        <div class="author-company">Operations Director, ChemTech Industries</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">How It Works</a>
+            <a href="#">FAQ</a>
+            <a href="#">Contact</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        <p>&copy; 2023 WasteBidder - Industrial Waste & Byproduct Auction Platform. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>
